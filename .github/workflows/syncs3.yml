@@ -23,6 +23,6 @@ jobs:
 
     - name: Upload files to S3
       run: |
-        aws s3 sync ~/dags s3://${{ secrets.AWS_S3_BUCKET }}/dags/
+        aws s3 sync ./dags s3://${{ secrets.AWS_S3_BUCKET }}/dags/
       # Replace /path/to/your/local/directory with the local directory containing the files you want to upload.
       # Replace your-s3-bucket/folder/ with the S3 bucket and folder where you want to upload the files.

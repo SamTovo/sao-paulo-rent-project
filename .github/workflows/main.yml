@@ -1,0 +1,2 @@
+- name: S3 File Upload
+  uses: zdurham/s3-upload-github-action@1.0.1

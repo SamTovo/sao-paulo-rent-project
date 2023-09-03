@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
 from custom_modules.rent_extractor.apartment_extractor import GetApartmentsInfo
 import io
-import s3fs
 import pandas as pd
 from datetime import date 
 

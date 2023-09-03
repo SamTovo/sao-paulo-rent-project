@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup 
 
 class B4SApartmentExtractorSoup:
 

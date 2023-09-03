@@ -18,8 +18,8 @@ def day_of_week():
     return day_of_week
 
 def define_page_range_for_request():
-    first_page=day_of_week()*100
-    last_page=first_page+100
+    first_page=day_of_week()*10
+    last_page=first_page+10
     return first_page, last_page
 
 

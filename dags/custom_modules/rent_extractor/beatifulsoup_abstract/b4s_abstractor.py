@@ -5,7 +5,7 @@ logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)
     datefmt='%Y-%m-%d:%H:%M:%S',
     level=logging.DEBUG)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("airflow.task")
 
 
 class B4SApartmentExtractor:
@@ -70,7 +70,7 @@ class B4SApartmentExtractor:
         Return Apartment's Number of Rooms, through the HTML's element.
         """
         logger.debug("Getting Apartment number_of_rooms information.")
-        number_of_rooms=self.rent_info.find('p', itemprop='numberOfBathroomsTotal').text.strip()
+        number_of_rooms=self.rent_info.find('p', itemprop='numberOfRooms').text.strip()
         return number_of_rooms
     
     def find_apartment_number_of_bathrooms(self) -> int:
@@ -78,7 +78,11 @@ class B4SApartmentExtractor:
         Return Apartment's Number of Bathrooms, through the HTML's element.
         """
         logger.debug("Getting Apartment number_of_bathrooms information.")
-        number_of_bathrooms = self.rent_info.find('p', itemprop='numberOfBathroomsTotal').text.strip()
+        if  self.rent_info.find('p', itemprop='numberOfBathroomsTotal').text.strip():
+            number_of_bathrooms = self.rent_info.find('p', itemprop='numberOfBathroomsTotal').text.strip()
+        else:
+            number_of_bathrooms = "0"
+            
         return number_of_bathrooms
     
     # def find_apartment_parking_spots(self) -> int:

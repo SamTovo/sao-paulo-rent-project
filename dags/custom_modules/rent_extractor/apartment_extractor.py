@@ -5,8 +5,8 @@ import sys
 import time
 # from custom_modules.rent_extractor.beatifulsoup_abstract.b4s_abstractor import B4SApartmentExtractor
 # from custom_modules.rent_extractor.beatifulsoup_abstract.b4s_abstractor_soup import B4SApartmentExtractorSoup
-from beatifulsoup_abstract.b4s_abstractor import B4SApartmentExtractor
-from beatifulsoup_abstract.b4s_abstractor_soup import B4SApartmentExtractorSoup
+from custom_modules.rent_extractor.beatifulsoup_abstract.b4s_abstractor import B4SApartmentExtractor
+from custom_modules.rent_extractor.beatifulsoup_abstract.b4s_abstractor_soup import B4SApartmentExtractorSoup
 import logging
 
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',

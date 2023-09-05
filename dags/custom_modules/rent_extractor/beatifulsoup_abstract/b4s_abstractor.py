@@ -70,7 +70,10 @@ class B4SApartmentExtractor:
         Return Apartment's Number of Rooms, through the HTML's element.
         """
         logger.debug("Getting Apartment number_of_rooms information.")
-        number_of_rooms=self.rent_info.find('p', itemprop='numberOfRooms').text.strip()
+        if self.rent_info.find('p', itemprop='numberOfRooms').text.strip():
+            number_of_rooms=self.rent_info.find('p', itemprop='numberOfRooms').text.strip()
+        else: 
+            number_of_rooms="0"
         return number_of_rooms
     
     def find_apartment_number_of_bathrooms(self) -> int:

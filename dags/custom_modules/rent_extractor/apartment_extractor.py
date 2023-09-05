@@ -62,18 +62,21 @@ class GetApartmentsInfo:
             logger.debug(len(total_rent_infos))
             for rent_info in total_rent_infos:
                 b4s_apartment_infos=B4SApartmentExtractor(rent_info)
+                if b4s_apartment_infos.find_apartment_number_of_rooms()=="0":
+                    continue
+                else:
 
-                self.price.append(b4s_apartment_infos.find_apartment_rent_price())
-                self.address.append(b4s_apartment_infos.find_apartment_address())
-                # self.condominium.append(b4s_apartment_infos.find_apartment_codominium())
-                self.floor_size.append(b4s_apartment_infos.find_apartment_floor_size())
-                # self.iptu.append(b4s_apartment_infos.find_apartment_iptu())
-                self.number_of_rooms.append(b4s_apartment_infos.find_apartment_number_of_rooms())
-                self.number_of_bathrooms.append(b4s_apartment_infos.find_apartment_number_of_bathrooms())
-                self.total_price.append(b4s_apartment_infos.find_apartment_total_price())
-                # self.parking_spots.append(b4s_apartment_infos.find_apartment_parking_spots())
-                # self.description.append(b4s_apartment_infos.find_apartment_description())
-                time.sleep(5)
+                    self.price.append(b4s_apartment_infos.find_apartment_rent_price())
+                    self.address.append(b4s_apartment_infos.find_apartment_address())
+                    # self.condominium.append(b4s_apartment_infos.find_apartment_codominium())
+                    self.floor_size.append(b4s_apartment_infos.find_apartment_floor_size())
+                    # self.iptu.append(b4s_apartment_infos.find_apartment_iptu())
+                    self.number_of_rooms.append(b4s_apartment_infos.find_apartment_number_of_rooms())
+                    self.number_of_bathrooms.append(b4s_apartment_infos.find_apartment_number_of_bathrooms())
+                    self.total_price.append(b4s_apartment_infos.find_apartment_total_price())
+                    # self.parking_spots.append(b4s_apartment_infos.find_apartment_parking_spots())
+                    # self.description.append(b4s_apartment_infos.find_apartment_description())
+                    time.sleep(5)
     def _check_if_result_is_none(self,df):
         if df is None:
             raise ValueError("The DataFrame is Empty")

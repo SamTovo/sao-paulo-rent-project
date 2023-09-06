@@ -55,29 +55,26 @@ class GetApartmentsInfo:
         """
         logger.info(f"Initializing extraction of apartment renting pages")
         for page in range(self.first_url_page,self.last_url_page):
-            try:
 
-                self.page_number=page
-                self._get_apartment_page()
-                self._generate_html_page()
-                total_rent_infos=self.b4s_object.get_general_apartment_info()
-                logger.debug(len(total_rent_infos))
-                for rent_info in total_rent_infos:
-                    b4s_apartment_infos=B4SApartmentExtractor(rent_info)
-                    self.price.append(b4s_apartment_infos.find_apartment_rent_price())
-                    self.address.append(b4s_apartment_infos.find_apartment_address())
-                    # self.condominium.append(b4s_apartment_infos.find_apartment_codominium())
-                    self.floor_size.append(b4s_apartment_infos.find_apartment_floor_size())
-                    # self.iptu.append(b4s_apartment_infos.find_apartment_iptu())
-                    self.number_of_rooms.append(b4s_apartment_infos.find_apartment_number_of_rooms())
-                    self.number_of_bathrooms.append(b4s_apartment_infos.find_apartment_number_of_bathrooms())
-                    self.total_price.append(b4s_apartment_infos.find_apartment_total_price())
-                    # self.parking_spots.append(b4s_apartment_infos.find_apartment_parking_spots())
-                    # self.description.append(b4s_apartment_infos.find_apartment_description())
-                    time.sleep(5)
-            except Exception as e:
-                logging.error(str(e))
-                continue
+            self.page_number=page
+            self._get_apartment_page()
+            self._generate_html_page()
+            total_rent_infos=self.b4s_object.get_general_apartment_info()
+            logger.debug(len(total_rent_infos))
+            for rent_info in total_rent_infos:
+                b4s_apartment_infos=B4SApartmentExtractor(rent_info)
+                self.price.append(b4s_apartment_infos.find_apartment_rent_price())
+                self.address.append(b4s_apartment_infos.find_apartment_address())
+                # self.condominium.append(b4s_apartment_infos.find_apartment_codominium())
+                self.floor_size.append(b4s_apartment_infos.find_apartment_floor_size())
+                # self.iptu.append(b4s_apartment_infos.find_apartment_iptu())
+                self.number_of_rooms.append(b4s_apartment_infos.find_apartment_number_of_rooms())
+                self.number_of_bathrooms.append(b4s_apartment_infos.find_apartment_number_of_bathrooms())
+                self.total_price.append(b4s_apartment_infos.find_apartment_total_price())
+                # self.parking_spots.append(b4s_apartment_infos.find_apartment_parking_spots())
+                # self.description.append(b4s_apartment_infos.find_apartment_description())
+                time.sleep(5)
+
     def _check_if_result_is_none(self,df):
         if df is None:
             raise ValueError("The DataFrame is Empty")

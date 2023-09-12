@@ -4,11 +4,14 @@ import logging
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
+from airflow.hooks.S3_hook import S3Hook
+
 from custom_modules.rent_extractor.apartment_extractor import GetApartmentsInfo
 import io
 import pandas as pd
 from datetime import date 
-import pyarrow
+import pyarrow as pa
+import pyarrow as pq
 import fsspec
 import s3fs
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
@@ -33,7 +36,15 @@ def extract_rent_etl():
     first_page, last_page = define_page_range_for_request()
     extraction=GetApartmentsInfo(first_page,last_page)
     extraction_pd=extraction.generate_pandas_apartment_info()
-    extraction_pd.to_parquet(f"s3://rent-extraction/bronze/rent_extraction_{date.today()}.parquet")
+    table = pa.Table.from_pandas(extraction_pd)
+    buffer = io.BytesIO()
+    pq.write_table(table, buffer)
+    s3_bucket_name="rent-extraction"
+    s3_object_key="rent-extraction/source"
+    s3_hook = S3Hook(aws_conn_id="aws_default")
+    with buffer as buffer_file:
+        s3_hook.load_bytes(buffer_file.read(), s3_object_key, bucket_name=s3_bucket_name)
+
 
     
 

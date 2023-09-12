@@ -23,7 +23,7 @@ def create_and_upload_parquet_to_s3():
 
     # Specify your S3 bucket and object (destination path) information
     s3_bucket_name="rent-extraction"
-    s3_object_key="rent-extraction/source/test.parquet"
+    s3_object_key="source/test.parquet"
 
     # Initialize the S3Hook
     s3_hook = S3Hook(aws_conn_id="aws_default")  # "aws_default" should match your MWAA connection ID

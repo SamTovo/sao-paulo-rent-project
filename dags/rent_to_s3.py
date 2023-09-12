@@ -11,7 +11,7 @@ import io
 import pandas as pd
 from datetime import date 
 import pyarrow as pa
-import pyarrow as pq
+import pyarrow.parquet as pq
 import fsspec
 import s3fs
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',

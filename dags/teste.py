@@ -20,7 +20,7 @@ def create_and_upload_parquet_to_s3():
 
     # Write the PyArrow Table as a Parquet file to the buffer
     pq.write_table(table, buffer)
-
+    buffer.seek(0)
     # Specify your S3 bucket and object (destination path) information
     s3_bucket_name="rent-extraction"
     s3_object_key="source/test.parquet"

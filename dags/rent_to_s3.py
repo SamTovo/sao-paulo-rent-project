@@ -40,7 +40,7 @@ def extract_rent_etl():
     buffer = io.BytesIO()
     pq.write_table(table, buffer)
     s3_bucket_name="rent-extraction"
-    s3_object_key="rent-extraction/source"
+    s3_object_key=f"source/rent_extraction_{date.today()}.parquet"
     s3_hook = S3Hook(aws_conn_id="aws_default")
     with buffer as buffer_file:
         s3_hook.load_bytes(buffer_file.read(), s3_object_key, bucket_name=s3_bucket_name)

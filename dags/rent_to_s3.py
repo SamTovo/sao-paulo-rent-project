@@ -39,6 +39,7 @@ def extract_rent_etl():
     table = pa.Table.from_pandas(extraction_pd)
     buffer = io.BytesIO()
     pq.write_table(table, buffer)
+    buffer.seek(0)
     s3_bucket_name="rent-extraction"
     s3_object_key=f"source/rent_extraction_{date.today()}.parquet"
     s3_hook = S3Hook(aws_conn_id="aws_default")

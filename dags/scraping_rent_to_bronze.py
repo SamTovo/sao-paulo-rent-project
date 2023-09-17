@@ -44,7 +44,7 @@ def extract_rent_etl():
     # s3_hook = S3Hook(aws_conn_id="aws_default")
     # with buffer as buffer_file:
     #     s3_hook.load_bytes(buffer_file.read(), s3_object_key, bucket_name=s3_bucket_name)
-    extraction_pd.to_parquet("gs://rent-extraction/bronze")
+    extraction_pd.to_parquet("gs://rent-extraction/bronze/scraped_rent_sp.parquet")
 
 
     

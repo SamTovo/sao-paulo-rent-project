@@ -52,8 +52,9 @@ with DAG(
     execute_spark_bronze_to_silver_rent = DataprocSubmitJobOperator(
         task_id="execute_spark_bronze_to_silver_rent", 
         job=PYSPARK_JOB, 
-        location=REGION, 
-        project_id=PROJECT_ID
+        region=REGION, 
+        project_id=PROJECT_ID,
+
     )
 
     delete_cluster = DataprocDeleteClusterOperator(

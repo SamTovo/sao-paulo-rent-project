@@ -1,31 +1,31 @@
-name: Upload to S3
+name: GCS Deployment
 
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
 on:
   push:
-    branches:
-      - main # You can change this to your main branch name
+    branches: [ main ]
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  upload:
+  # This workflow contains a single job called "deploy"
+  deploy:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
 
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v1
+    # Setup gcloud CLI
+    - uses: google-github-actions/setup-gcloud@v0
       with:
-        aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-        
+        service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: rent-extract-project
 
-    - name: Upload files to S3
+    - name: Deploy via GCS
       run: |
-        aws s3 sync ./dags s3://${{ secrets.AWS_S3_BUCKET }}/dags/
-    - name: Upload requirements to S3
-      run: |
-        aws s3 sync ./mwaaproject/req s3://${{ secrets.AWS_S3_BUCKET }}
-      # Replace /path/to/your/local/directory with the local directory containing the files you want to upload.
-      # Replace your-s3-bucket/folder/ with the S3 bucket and folder where you want to upload the files.
+        gsutil -m rm -rf gs://us-west1-airflow-lab-d2d06a86-bucket/dags/* || echo "$?"
+        gsutil -m cp -r sao-paulo-rent-project/dags/* gs://us-west1-airflow-lab-d2d06a86-bucket/dags/

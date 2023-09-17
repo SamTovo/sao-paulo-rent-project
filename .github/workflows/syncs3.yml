@@ -28,4 +28,4 @@ jobs:
     - name: Deploy via GCS
       run: |
         gsutil -m rm -rf gs://us-west1-airflow-lab-d2d06a86-bucket/dags/* || echo "$?"
-        gsutil -m cp -r sao-paulo-rent-project/dags/* gs://us-west1-airflow-lab-d2d06a86-bucket/dags/
+        gsutil -m cp -r ~/dags/* gs://us-west1-airflow-lab-d2d06a86-bucket/dags/

@@ -39,6 +39,7 @@ with DAG(
     default_args=default_args,
     start_date=datetime(2021, 1, 1),
     schedule="0 0 * * *",
+    catchup=False
 ) as dag:
 
     create_cluster = DataprocCreateClusterOperator(

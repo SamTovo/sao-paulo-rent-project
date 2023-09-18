@@ -15,13 +15,13 @@ PYSPARK_URI='gs://us-west1-airflow-lab-d2d06a86-bucket/dags/custom_modules/spark
 CLUSTER_CONFIG = {
     "master_config": {
         "num_instances": 1,
-        "machine_type_uri": "n1-standard-2",
-        "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 30},
-     },
+        "machine_type_uri": "n1-standard-4",
+        "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 32},
+    },
     "worker_config": {
         "num_instances": 2,
-        "machine_type_uri": "n1-standard-2",
-        "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 30},
+        "machine_type_uri": "n1-standard-4",
+        "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 32},
     }
 }
 
@@ -44,7 +44,8 @@ with DAG(
         project_id=PROJECT_ID,
         cluster_config=CLUSTER_CONFIG,
         region=REGION,
-        cluster_name=CLUSTER_NAME,
+        cluster_name=CLUSTER_NAME,   
+        retry=1
     )
 
     execute_spark_bronze_to_silver_rent = DataprocSubmitJobOperator(

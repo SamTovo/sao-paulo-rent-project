@@ -44,8 +44,7 @@ with DAG(
         project_id=PROJECT_ID,
         cluster_config=CLUSTER_CONFIG,
         region=REGION,
-        cluster_name=CLUSTER_NAME,   
-        retry=1
+        cluster_name=CLUSTER_NAME
     )
 
     execute_spark_bronze_to_silver_rent = DataprocSubmitJobOperator(

@@ -5,9 +5,7 @@ from airflow.providers.google.cloud.operators.dataproc import  DataprocCreateClu
 from airflow.providers.google.cloud.operators.dataproc import DataprocSubmitJobOperator
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
-default_args = {
-    'depends_on_past': False   
-}
+
 
 CLUSTER_NAME = 'bronze-to-silver-cluster'
 REGION='us-west1'
@@ -20,11 +18,11 @@ CLUSTER_CONFIG = {
         "machine_type_uri": "n1-standard-2",
         "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 30},
      },
-    # "worker_config": {
-    #     "num_instances": 2,
-    #     "machine_type_uri": "n1-standard-1",
-    #     "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 30},
-    # }
+    "worker_config": {
+        "num_instances": 1,
+        "machine_type_uri": "n1-standard-2",
+        "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 30},
+    }
 }
 
 
@@ -36,7 +34,6 @@ PYSPARK_JOB = {
 
 with DAG(
     dag_id='bronze_to_silver_rent_dataproc',
-    default_args=default_args,
     start_date=datetime(2021, 1, 1),
     schedule="0 0 * * *",
     catchup=False

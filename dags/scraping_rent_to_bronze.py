@@ -6,12 +6,12 @@ from airflow.operators.python_operator import PythonOperator
 from custom_modules.rent_extractor.apartment_extractor import GetApartmentsInfo
 import pandas as pd
 from datetime import date 
-
+import os
 import gcsfs
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S',
     level=logging.DEBUG)
-
+GCS_KEY=os.getenv["GCS_JSON_KEY"]
 logger = logging.getLogger("airflow.task")
 
 
@@ -27,6 +27,7 @@ def define_page_range_for_request():
 
 
 def extract_rent_etl():
+    fs=gcsfs.GCSFileSystem(token=GCS_KEY)
     first_page, last_page = define_page_range_for_request()
     extraction=GetApartmentsInfo(first_page,last_page)
     extraction_pd=extraction.generate_pandas_apartment_info()

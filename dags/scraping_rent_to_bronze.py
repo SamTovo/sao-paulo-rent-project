@@ -11,7 +11,7 @@ import gcsfs
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S',
     level=logging.DEBUG)
-GCS_KEY=os.getenv["GCS_JSON_KEY"]
+GCS_KEY=os.getenv("GCS_JSON_KEY")
 logger = logging.getLogger("airflow.task")
 
 

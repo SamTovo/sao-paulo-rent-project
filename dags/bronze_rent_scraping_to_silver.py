@@ -10,7 +10,7 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 CLUSTER_NAME = 'bronze-to-silver-cluster'
 REGION='us-west2'
 PROJECT_ID='rent-extract-project'
-PYSPARK_URI='gs://us-west1-airflow-lab-d2d06a86-bucket/dags/custom_modules/spark_scripts/spark_rent_extraction_bronze_to_silvel.py'
+PYSPARK_URI='gs://spark-scripts-rent-project/spark_rent_extraction_bronze_to_silvel.py'
 
 CLUSTER_CONFIG = {
     "master_config": {

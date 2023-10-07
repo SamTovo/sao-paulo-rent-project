@@ -4,10 +4,13 @@ from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
 from custom_modules.rent_extractor.apartment_extractor import GetApartmentsInfo
+from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
+
 import pandas as pd
 from datetime import date 
 import os
 import gcsfs
+from io import BytesIO
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S',
     level=logging.DEBUG)
@@ -27,13 +30,16 @@ def define_page_range_for_request():
 
 
 def extract_rent_etl():
-    fs=gcsfs.GCSFileSystem(token=GCS_KEY)
+    buffer=BytesIO()
     first_page, last_page = define_page_range_for_request()
     extraction=GetApartmentsInfo(first_page,last_page)
     extraction_pd=extraction.generate_pandas_apartment_info()
+    bytes_data=extraction_pd.to_parquet(buffer)
+    buffer.seek(0)
+    return bytes_data
 
-    extraction_pd.to_parquet(f"gs://rent-extraction/bronze/scraped_rent_sp_{date.today()}.parquet")
-
+FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"
+BUCKET_NAME="rent-extraction"
 
 default_args = {
     'depends_on_past': False    
@@ -51,5 +57,12 @@ with DAG(
         python_callable = extract_rent_etl,
         provide_context = True, 
     )
-    extract_rent_to_parquet_bronze
+
+    upload_file = LocalFilesystemToGCSOperator(
+        task_id="upload_file",
+        src=extract_rent_to_parquet_bronze.output,
+        dst=FILE_NAME,
+        bucket=BUCKET_NAME,
+    )
+    extract_rent_to_parquet_bronze >> upload_file
 

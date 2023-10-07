@@ -158,6 +158,7 @@ with DAG(
     create_cluster >> execute_spark_bronze_to_silver_rent 
     execute_spark_bronze_to_silver_rent >> execute_spark_silver_to_gold_rent 
     execute_spark_silver_to_gold_rent >> delete_cluster
+    delete_cluster >> get_dataset
     get_dataset >> branch_task_creation
     branch_task_creation >> create_dataset
     branch_task_creation >> create_sao_paulo_rent_analisys

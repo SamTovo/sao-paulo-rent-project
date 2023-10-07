@@ -64,6 +64,7 @@ with DAG(
         src=extract_rent_to_parquet_bronze.output,
         dst=FILE_NAME,
         bucket=BUCKET_NAME,
+        retries=0
     )
     extract_rent_to_parquet_bronze >> upload_file
 

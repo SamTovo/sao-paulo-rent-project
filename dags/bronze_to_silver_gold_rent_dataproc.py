@@ -83,6 +83,7 @@ with DAG(
         cluster_config=CLUSTER_GENERATOR_CONFIG,
         region=REGION,
         cluster_name=CLUSTER_NAME,
+        retries=0
 
     )
 
@@ -91,6 +92,7 @@ with DAG(
         job=PYSPARK_JOB_SILVER, 
         region=REGION, 
         project_id=PROJECT_ID,
+        retries=0
 
     )
 
@@ -100,6 +102,7 @@ with DAG(
         job=PYSPARK_JOB_GOLD, 
         region=REGION, 
         project_id=PROJECT_ID,
+        retries=0
 
     )
     delete_cluster = DataprocDeleteClusterOperator(
@@ -107,7 +110,8 @@ with DAG(
         project_id=PROJECT_ID, 
         cluster_name=CLUSTER_NAME, 
         region=REGION,
-        trigger_rule=TriggerRule.ALL_DONE
+        trigger_rule=TriggerRule.ALL_DONE,
+        retries=0
     )
 
     get_dataset = BigQueryGetDatasetOperator(task_id="get-dataset", dataset_id=DATASET_NAME)
@@ -143,6 +147,7 @@ with DAG(
         {"name": "latitude", "type": "DOUBLE", "mode": "REQUIRED"},
         {"name": "longitude", "type": "DOUBLE", "mode": "REQUIRED"},        
     ],
+    retries=0
 )
 
     update_table_sao_paulo_rent_analisys = BigQueryUpdateTableOperator(
@@ -152,7 +157,8 @@ with DAG(
         table_resource={
         "friendlyName": "Updated Table",
         "description": "Updated Table",
-    },
+         },
+        retries=0
     )
 
     create_cluster >> execute_spark_bronze_to_silver_rent 

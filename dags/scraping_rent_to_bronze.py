@@ -36,7 +36,7 @@ def extract_rent_etl(**kwargs):
     extraction_pd=extraction.generate_pandas_apartment_info()
     bytes_data=extraction_pd.to_parquet(buffer)
     buffer.seek(0)
-    result_value = bytes_data
+    result_value = buffer.read()
     kwargs['ti'].xcom_push(key='return_value', value=result_value)
 
 FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"

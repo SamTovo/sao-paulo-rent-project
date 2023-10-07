@@ -4,6 +4,7 @@ from pyspark.sql.functions import udf
 from pyspark.sql.types import DoubleType
 
 
+spark = SparkSession.builder.enableHiveSupport().getOrCreate()
 
 def geocode(address,code):
     allowed_values = ('lat', 'lng') 

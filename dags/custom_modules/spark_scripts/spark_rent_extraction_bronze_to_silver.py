@@ -19,7 +19,7 @@ df_transformed = spark.read.parquet(f'gs://{gcs_bucket}/{parquet_file_path}')\
 
 
 df_silver = df_transformed.dropDuplicates().na.drop()
-df_silver.write.mode("overwrite").parquet(f"{gcs_bucket}/silver/silver_rent_extraction.parquet")
+df_silver.write.mode("overwrite").parquet(f"gs://{gcs_bucket}/silver/silver_rent_extraction.parquet")
     
 print(f"Finished! Rows Created: {df_silver.count()}")
 

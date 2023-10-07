@@ -29,6 +29,6 @@ jobs:
       run: |
         gsutil -m rm -rf gs://spark-scripts-rent-project/* || echo "$?"
         gsutil -m cp -r dags/custom_modules/spark_scripts/* gs://spark-scripts-rent-project/
-        gsutil -m rm -rf gs://southamerica-east1-airflow--24ae4bad-bucket/* || echo "$?"
-        gsutil -m cp -r dags/custom_modules/spark_scripts/* gs://southamerica-east1-airflow--24ae4bad-bucket/
+        gsutil -m rm -rf gs://southamerica-east1-airflow--24ae4bad-bucket/dags/* || echo "$?"
+        gsutil -m cp -r dags/custom_modules/spark_scripts/* gs://southamerica-east1-airflow--24ae4bad-bucket/dags/
 

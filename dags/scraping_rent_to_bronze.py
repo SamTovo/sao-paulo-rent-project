@@ -47,7 +47,7 @@ default_args = {
 with DAG(
     dag_id="scraping_rent_to_bronze",
     start_date=datetime(2021, 1, 1),
-    schedule="0 0 * * *",
+    schedule_interval="0 0 * * *",
     default_args=default_args,
     catchup=False
     ) as dag:

@@ -71,9 +71,9 @@ def decide_branch_update(**kwargs):
 
 
 with DAG(
-    dag_id='bronze_to_silver_rent_dataproc',
+    dag_id='bronze_to_silver_gold_rent_dataproc',
     start_date=datetime(2021, 1, 1),
-    schedule="0 0 * * *",
+    schedule_interval="0 0 * * *",
     catchup=False
 ) as dag:
 

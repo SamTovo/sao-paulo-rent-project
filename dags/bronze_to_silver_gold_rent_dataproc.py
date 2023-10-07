@@ -30,7 +30,7 @@ DATA_SAMPLE_GCS_OBJECT_NAME='gold/gold_rent_extraction.parquet'
 
 CLUSTER_GENERATOR_CONFIG = ClusterGenerator(
     project_id=PROJECT_ID,
-    zone=REGION+"a",
+    zone=REGION+"-a",
     master_machine_type="n1-standard-2",
     master_disk_size=32,
     worker_machine_type="n1-standard-2",

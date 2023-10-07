@@ -29,14 +29,15 @@ def define_page_range_for_request():
     return first_page, last_page
 
 
-def extract_rent_etl():
+def extract_rent_etl(**kwargs):
     buffer=BytesIO()
     first_page, last_page = define_page_range_for_request()
     extraction=GetApartmentsInfo(first_page,last_page)
     extraction_pd=extraction.generate_pandas_apartment_info()
     bytes_data=extraction_pd.to_parquet(buffer)
     buffer.seek(0)
-    return bytes_data
+    result_value = bytes_data
+    kwargs['ti'].xcom_push(key='return_value', value=result_value)
 
 FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"
 BUCKET_NAME="rent-extraction"

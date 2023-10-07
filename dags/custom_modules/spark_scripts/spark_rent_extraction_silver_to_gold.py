@@ -2,7 +2,7 @@ from pyspark.sql.functions import col, lit
 import googlemaps
 from pyspark.sql.functions import udf
 from pyspark.sql.types import DoubleType
-
+from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.enableHiveSupport().getOrCreate()
 

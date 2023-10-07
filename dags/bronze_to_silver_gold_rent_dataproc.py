@@ -148,7 +148,11 @@ with DAG(
     update_table_sao_paulo_rent_analisys = BigQueryUpdateTableOperator(
         task_id="update_table_sao_paulo_rent_analisys",
         dataset_id=DATASET_NAME,
-        table_id="sao_paulo_rent_analisys"
+        table_id="sao_paulo_rent_analisys",
+        table_resource={
+        "friendlyName": "Updated Table",
+        "description": "Updated Table",
+    },
     )
 
     create_cluster >> execute_spark_bronze_to_silver_rent 

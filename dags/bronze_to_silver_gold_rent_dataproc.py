@@ -123,7 +123,7 @@ with DAG(
 
 
     branch_task_update = BranchPythonOperator(
-        task_id='branch_task_creation',
+        task_id='branch_task_update',
         python_callable=decide_branch_update,
         provide_context=True,
         dag=dag,

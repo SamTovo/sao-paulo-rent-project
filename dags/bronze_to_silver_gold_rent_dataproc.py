@@ -15,6 +15,7 @@ from airflow.providers.google.cloud.operators.bigquery import (
     BigQueryCreateExternalTableOperator,
     BigQueryUpdateTableOperator
 )
+from airflow.utils.state import State
 
 
 CLUSTER_NAME = 'bronze-to-silver-cluster'
@@ -55,19 +56,18 @@ PYSPARK_JOB_GOLD = {
 }
 
 
-def decide_branch_create(**kwargs):
-    task_instance = kwargs['task_instance']
-    
-    # Check if the upstream task has failed
-    if task_instance.xcom_pull(task_ids='get-dataset', key='return_value') == 'failed':
-        return 'create_dataset'
-    elif task_instance.xcom_pull(task_ids='get-dataset', key='return_value') == 'succeded':
-        return 'create_sao_paulo_rent_analisys'
+def choose_task_to_create_dataset(upstream_task_id, dag_run):
+    upstream_task_state = dag_run.get_task_instance(upstream_task_id).state
+    if upstream_task_state == State.FAILED:
+        return "create_dataset"
 
-def decide_branch_update(**kwargs):
-    task_instance = kwargs['task_instance']
-    if task_instance.xcom_pull(task_ids='create_sao_paulo_rent_analisys', key='return_value') == 'failed':
-        return 'update_table_sao_paulo_rent_analisys'
+    return "create_sao_paulo_rent_analisys"
+
+def choose_task_to_update_table(upstream_task_id, dag_run):
+    upstream_task_state = dag_run.get_task_instance(upstream_task_id).state
+    if upstream_task_state == State.FAILED:
+        return "update_table_sao_paulo_rent_analisys"
+
 
 
 with DAG(
@@ -120,20 +120,15 @@ with DAG(
 
     branch_task_creation = BranchPythonOperator(
         task_id='branch_task_creation',
-        python_callable=decide_branch_create,
+        python_callable=choose_task_to_create_dataset,
+        op_args=[get_dataset.task_id],
         trigger_rule="all_done",
         provide_context=True,
         dag=dag,
     )
 
 
-    branch_task_update = BranchPythonOperator(
-        task_id='branch_task_update',
-        python_callable=decide_branch_update,
-        trigger_rule="all_done",
-        provide_context=True,
-        dag=dag,
-    )
+    
     create_sao_paulo_rent_analisys = BigQueryCreateExternalTableOperator(
     task_id="create_sao_paulo_rent_analisys",
     destination_project_dataset_table=f"{DATASET_NAME}.sao_paulo_rent_analisys",
@@ -152,6 +147,15 @@ with DAG(
     retries=0
 )
 
+
+    branch_task_update = BranchPythonOperator(
+            task_id='branch_task_update',
+            python_callable=choose_task_to_update_table,
+            op_args=[create_sao_paulo_rent_analisys.task_id],
+            trigger_rule="all_done",
+            provide_context=True,
+            dag=dag,
+        )
     update_table_sao_paulo_rent_analisys = BigQueryUpdateTableOperator(
         task_id="update_table_sao_paulo_rent_analisys",
         dataset_id=DATASET_NAME,

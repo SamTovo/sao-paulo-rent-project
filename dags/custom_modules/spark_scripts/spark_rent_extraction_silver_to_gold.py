@@ -16,7 +16,7 @@ def geocode(address,code):
     
 geocode_udf = udf(lambda address, code: geocode(address, code), DoubleType())
 
-gcs_bucket = "rent-extraction"
+gcs_bucket = "rent-extraction-us"
 parquet_file_path = "silver/silver_rent_extraction.parquet"
 
 df_transformed = spark.read.parquet(f'gs://{gcs_bucket}/{parquet_file_path}')\

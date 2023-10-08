@@ -26,7 +26,7 @@ PYSPARK_URI_GOLD='gs://spark-scripts-rent-project/spark_rent_extraction_silver_t
 INIT_BUCKET="gold-init-script"
 INIT_FILE="pip-install.sh"
 DATASET_NAME="rent_extraction_dataset"
-DATA_SAMPLE_GCS_BUCKET_NAME="rent-extraction"
+DATA_SAMPLE_GCS_BUCKET_NAME="rent-extraction-us"
 DATA_SAMPLE_GCS_OBJECT_NAME='gold/gold_rent_extraction.parquet'
 
 CLUSTER_GENERATOR_CONFIG = ClusterGenerator(

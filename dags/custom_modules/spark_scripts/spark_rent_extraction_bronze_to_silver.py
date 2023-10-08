@@ -6,7 +6,7 @@ import logging
 
 
 spark = SparkSession.builder.enableHiveSupport().getOrCreate()
-gcs_bucket = "rent-extraction"
+gcs_bucket = "rent-extraction-us"
 parquet_file_path = "bronze/scraped_rent_sp_*"
 print("Writing Silver Table")
 df_transformed = spark.read.parquet(f'gs://{gcs_bucket}/{parquet_file_path}')\

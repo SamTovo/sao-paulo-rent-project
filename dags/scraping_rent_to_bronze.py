@@ -19,7 +19,7 @@ logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)
     level=logging.DEBUG)
 logger = logging.getLogger("airflow.task")
 FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"
-BUCKET_NAME="rent-extraction"
+BUCKET_NAME="rent-extraction-us"
 
 def day_of_week():
     dt=datetime.now()

@@ -12,12 +12,14 @@ from datetime import date
 import os
 import gcsfs
 from io import BytesIO
+from google.cloud import storage
+
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S',
     level=logging.DEBUG)
-GCS_KEY=os.getenv("GCS_JSON_KEY")
 logger = logging.getLogger("airflow.task")
-
+FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"
+BUCKET_NAME="rent-extraction"
 
 def day_of_week():
     dt=datetime.now()
@@ -29,8 +31,24 @@ def define_page_range_for_request():
     last_page=first_page+10
     return first_page, last_page
 
+def upload_to_gcs(bucket, object_name, local_file):
+    """
+    Ref: https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-python
+    :param bucket: GCS bucket name
+    :param object_name: target path & file-name
+    :param local_file: source path & file-name
+    :return:
+    """
 
-def extract_rent_etl(**kwargs):
+
+    client = storage.Client()
+    bucket = client.bucket(bucket)
+
+    blob = bucket.blob(object_name)
+    blob.upload_from_file(local_file)
+
+
+def extract_rent_etl():
     buffer=BytesIO()
     first_page, last_page = define_page_range_for_request()
     extraction=GetApartmentsInfo(first_page,last_page)
@@ -41,10 +59,9 @@ def extract_rent_etl(**kwargs):
     parquet_buffer.seek(0)
     parquet_bytes = parquet_buffer.read()
     assert isinstance(parquet_bytes, bytes)
-    kwargs['ti'].xcom_push(key='return_value', value=parquet_bytes)
+    upload_to_gcs(BUCKET_NAME,FILE_NAME,parquet_bytes)
 
-FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"
-BUCKET_NAME="rent-extraction"
+
 
 default_args = {
     'depends_on_past': False    
@@ -63,12 +80,12 @@ with DAG(
         provide_context = True, 
     )
 
-    upload_file = LocalFilesystemToGCSOperator(
-        task_id="upload_file",
-        src=extract_rent_to_parquet_bronze.output,
-        dst=FILE_NAME,
-        bucket=BUCKET_NAME,
-        retries=0
-    )
-    extract_rent_to_parquet_bronze >> upload_file
+    # upload_file = LocalFilesystemToGCSOperator(
+    #     task_id="upload_file",
+    #     src=extract_rent_to_parquet_bronze.output,
+    #     dst=FILE_NAME,
+    #     bucket=BUCKET_NAME,
+    #     retries=0
+    # )
+    extract_rent_to_parquet_bronze 
 

@@ -144,7 +144,9 @@ with DAG(
         {"name": "latitude", "type": "FLOAT64", "mode": "REQUIRED"},
         {"name": "longitude", "type": "FLOAT64", "mode": "REQUIRED"},        
     ],
-    retries=0
+    retries=0,
+    location="us-west1"
+    
 )
 
 

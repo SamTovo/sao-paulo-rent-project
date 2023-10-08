@@ -112,8 +112,7 @@ with DAG(
     )
 
     get_dataset>>branch_task_creation
-    branch_task_creation >> create_dataset
-    branch_task_creation >> create_sao_paulo_rent_analisys
+    branch_task_creation >> [create_dataset,create_sao_paulo_rent_analisys]
     create_dataset >> create_sao_paulo_rent_analisys
     create_sao_paulo_rent_analisys >> branch_task_update
     branch_task_update >> update_table_sao_paulo_rent_analisys

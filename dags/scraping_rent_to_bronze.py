@@ -27,8 +27,10 @@ def day_of_week():
     return day_of_week
 
 def define_page_range_for_request():
-    first_page=day_of_week()*10
-    last_page=first_page+10
+    # first_page=day_of_week()*10
+    # last_page=first_page+10
+    first_page=1
+    last_page=2
     return first_page, last_page
 
 def upload_to_gcs(bucket, object_name, local_file):
@@ -57,7 +59,8 @@ def extract_rent_etl():
     table = pa.Table.from_pandas(extraction_pd)
     pq.write_table(table, parquet_buffer)
     parquet_buffer.seek(0)
-    parquet_bytes = parquet_buffer.read()
+    parquet_bytes = parquet_buffer.getvalue()
+
     assert isinstance(parquet_bytes, bytes)
     upload_to_gcs(BUCKET_NAME,FILE_NAME,parquet_bytes)
 

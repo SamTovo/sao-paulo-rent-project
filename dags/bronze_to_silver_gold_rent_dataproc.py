@@ -60,7 +60,7 @@ def choose_task_to_create_dataset(upstream_task_id, dag_run):
     upstream_task_state = dag_run.get_task_instance(upstream_task_id).state
     if upstream_task_state == State.FAILED:
         return "create_dataset"
-    else:
+    elif upstream_task_state == State.SUCCESS:
         return "create_sao_paulo_rent_analisys"
 
 def choose_task_to_update_table(upstream_task_id, dag_run):

@@ -93,6 +93,7 @@ with DAG(
         task_id="create_sao_paulo_rent_analisys",
         bucket=DATA_SAMPLE_GCS_BUCKET_NAME,
         source_objects=[DATA_SAMPLE_GCS_OBJECT_NAME],
+        source_format='PARQUET',
         destination_project_dataset_table=f"{DATASET_NAME}.sao_paulo_rent_analisys",
         schema_fields=[
         {"name": "price", "type": "INTEGER", "mode": "REQUIRED"},

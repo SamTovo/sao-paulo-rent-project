@@ -46,7 +46,7 @@ def choose_task_to_update_table(upstream_task_id, dag_run):
 
 
 with DAG(
-    dag_id='bronze_to_silver_gold_rent_dataproc',
+    dag_id='teste',
     start_date=datetime(2021, 1, 1),
     schedule_interval="0 0 * * *",
     catchup=False

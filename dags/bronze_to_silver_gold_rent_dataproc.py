@@ -116,7 +116,7 @@ with DAG(
 
     get_dataset = BigQueryGetDatasetOperator(task_id="get-dataset", dataset_id=DATASET_NAME,retries=0)
 
-    create_dataset = BigQueryCreateEmptyDatasetOperator(task_id="create_dataset", dataset_id=DATASET_NAME,retries=0)
+    
 
     branch_task_creation = BranchPythonOperator(
         task_id='branch_task_creation',
@@ -127,7 +127,7 @@ with DAG(
         dag=dag,
     )
 
-
+    create_dataset = BigQueryCreateEmptyDatasetOperator(task_id="create_dataset", dataset_id=DATASET_NAME,retries=0)
     
     create_sao_paulo_rent_analisys = BigQueryCreateExternalTableOperator(
     task_id="create_sao_paulo_rent_analisys",

@@ -33,9 +33,10 @@ DATA_SAMPLE_GCS_OBJECT_NAME='gold/gold_rent_extraction.parquet/*.parquet'
 
 def choose_task_to_create_dataset(upstream_task_id, dag_run):
     upstream_task_state = dag_run.get_task_instance(upstream_task_id).state
+    print(f"The state of the task {upstream_task_id} is {upstream_task_state}")
     if upstream_task_state == State.FAILED:
         return "create_dataset"
-    elif upstream_task_state == State.SUCCESS:
+    else:
         return "create_sao_paulo_rent_analisys"
 
 def choose_task_to_update_table(upstream_task_id, dag_run):

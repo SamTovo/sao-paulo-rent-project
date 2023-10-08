@@ -4,21 +4,17 @@ from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
 from custom_modules.rent_extractor.apartment_extractor import GetApartmentsInfo
-from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
 from datetime import date 
-import os
-import gcsfs
-from io import BytesIO
 from google.cloud import storage
 
 logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
     datefmt='%Y-%m-%d:%H:%M:%S',
     level=logging.DEBUG)
 logger = logging.getLogger("airflow.task")
-FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"
+FILE_NAME=f"bronze/scraped_rent_sp_{date.today()}.parquet"
 BUCKET_NAME="rent-extraction-us"
 
 def day_of_week():
@@ -33,36 +29,18 @@ def define_page_range_for_request():
     last_page=2
     return first_page, last_page
 
-def upload_to_gcs(bucket, object_name, local_file):
-    """
-    Ref: https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-python
-    :param bucket: GCS bucket name
-    :param object_name: target path & file-name
-    :param local_file: source path & file-name
-    :return:
-    """
-
-
-    client = storage.Client()
-    bucket = client.bucket(bucket)
-
-    blob = bucket.blob(object_name)
-    blob.upload_from_file(local_file)
 
 
 def extract_rent_etl():
-    buffer=BytesIO()
     first_page, last_page = define_page_range_for_request()
     extraction=GetApartmentsInfo(first_page,last_page)
     extraction_pd=extraction.generate_pandas_apartment_info()
-    parquet_buffer = BytesIO()
-    table = pa.Table.from_pandas(extraction_pd)
-    pq.write_table(table, parquet_buffer)
-    parquet_buffer.seek(0)
-    parquet_bytes = parquet_buffer.getvalue()
-
-    assert isinstance(parquet_bytes, bytes)
-    upload_to_gcs(BUCKET_NAME,FILE_NAME,parquet_bytes)
+    parquet_table=pa.Table.from_pandas(extraction_pd)
+    gcs_client=storage.Client()
+    bucket=gcs_client.get_bucket(BUCKET_NAME)
+    blob=bucket.blob(FILE_NAME)
+    with blob.open('wb') as file:
+        pq.write_table(parquet_table,file)
 
 
 

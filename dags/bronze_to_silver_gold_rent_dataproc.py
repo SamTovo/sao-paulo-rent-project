@@ -141,8 +141,8 @@ with DAG(
         {"name": "floor_size", "type": "INTEGER", "mode": "REQUIRED"},
         {"name": "number_of_rooms", "type": "INTEGER", "mode": "REQUIRED"},
         {"name": "number_of_bathrooms", "type": "INTEGER", "mode": "REQUIRED"},
-        {"name": "latitude", "type": "DOUBLE", "mode": "REQUIRED"},
-        {"name": "longitude", "type": "DOUBLE", "mode": "REQUIRED"},        
+        {"name": "latitude", "type": "FLOAT64", "mode": "REQUIRED"},
+        {"name": "longitude", "type": "FLOAT64", "mode": "REQUIRED"},        
     ],
     retries=0
 )

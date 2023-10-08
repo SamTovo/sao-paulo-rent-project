@@ -87,7 +87,7 @@ with DAG(
         {"name": "longitude", "type": "FLOAT64", "mode": "REQUIRED"},        
     ],
     retries=0,
-    location="us-west1"
+    trigger_rule="one_success",
     
 )
 

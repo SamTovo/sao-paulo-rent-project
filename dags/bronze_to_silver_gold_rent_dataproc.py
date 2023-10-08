@@ -145,7 +145,7 @@ with DAG(
         {"name": "longitude", "type": "FLOAT64", "mode": "REQUIRED"},        
     ],
     retries=0,
-    location="us-west1"
+    trigger_rule="one_success"
     
 )
 
@@ -174,9 +174,7 @@ with DAG(
     execute_spark_silver_to_gold_rent >> delete_cluster
     delete_cluster >> get_dataset
     get_dataset>>branch_task_creation
-    branch_task_creation >> create_dataset
-    branch_task_creation >> create_sao_paulo_rent_analisys
+    branch_task_creation >> [create_dataset,create_sao_paulo_rent_analisys]
     create_dataset >> create_sao_paulo_rent_analisys
     create_sao_paulo_rent_analisys >> branch_task_update
     branch_task_update >> update_table_sao_paulo_rent_analisys
-    

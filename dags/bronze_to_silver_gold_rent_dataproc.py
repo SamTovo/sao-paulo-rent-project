@@ -18,7 +18,7 @@ from airflow.providers.google.cloud.operators.bigquery import (
 
 
 CLUSTER_NAME = 'bronze-to-silver-cluster'
-REGION='us-east2'
+REGION='southamerica-east1'
 PROJECT_ID='rent-extract-project'
 PYSPARK_URI_SILVER='gs://spark-scripts-rent-project/spark_rent_extraction_bronze_to_silver.py'
 PYSPARK_URI_GOLD='gs://spark-scripts-rent-project/spark_rent_extraction_silver_to_gold.py'
@@ -30,7 +30,7 @@ DATA_SAMPLE_GCS_OBJECT_NAME='gold/gold_rent_extraction.parquet'
 
 CLUSTER_GENERATOR_CONFIG = ClusterGenerator(
     project_id=PROJECT_ID,
-    zone=REGION+"-a",
+    zone=REGION+"-b",
     master_machine_type="n1-standard-2",
     master_disk_size=32,
     worker_machine_type="n1-standard-2",

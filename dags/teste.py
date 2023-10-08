@@ -30,31 +30,6 @@ DATASET_NAME="rent_extraction_dataset"
 DATA_SAMPLE_GCS_BUCKET_NAME="rent-extraction-us"
 DATA_SAMPLE_GCS_OBJECT_NAME='gold/gold_rent_extraction.parquet'
 
-CLUSTER_GENERATOR_CONFIG = ClusterGenerator(
-    project_id=PROJECT_ID,
-    zone=REGION+"-b",
-    master_machine_type="n1-standard-2",
-    master_disk_size=32,
-    worker_machine_type="n1-standard-2",
-    worker_disk_size=32,
-    num_workers=2,
-    init_actions_uris=[f"gs://{INIT_BUCKET}/{INIT_FILE}"],
-    metadata={"PIP_PACKAGES": "googlemaps"}
-).make()
-
-
-
-PYSPARK_JOB_SILVER = {
-    "reference": {"project_id": PROJECT_ID},
-    "placement": {"cluster_name": CLUSTER_NAME},
-    "pyspark_job": {"main_python_file_uri": PYSPARK_URI_SILVER},
-}
-
-PYSPARK_JOB_GOLD = {
-    "reference": {"project_id": PROJECT_ID},
-    "placement": {"cluster_name": CLUSTER_NAME},
-    "pyspark_job": {"main_python_file_uri": PYSPARK_URI_GOLD},
-}
 
 
 def choose_task_to_create_dataset(upstream_task_id, dag_run):
@@ -78,42 +53,6 @@ with DAG(
     catchup=False
 ) as dag:
 
-    create_cluster = DataprocCreateClusterOperator(
-        task_id="create_cluster",
-        project_id=PROJECT_ID,
-        cluster_config=CLUSTER_GENERATOR_CONFIG,
-        region=REGION,
-        cluster_name=CLUSTER_NAME,
-        retries=0
-
-    )
-
-    execute_spark_bronze_to_silver_rent = DataprocSubmitJobOperator(
-        task_id="execute_spark_bronze_to_silver_rent", 
-        job=PYSPARK_JOB_SILVER, 
-        region=REGION, 
-        project_id=PROJECT_ID,
-        retries=0
-
-    )
-
-
-    execute_spark_silver_to_gold_rent = DataprocSubmitJobOperator(
-        task_id="execute_spark_silver_to_gold_rent", 
-        job=PYSPARK_JOB_GOLD, 
-        region=REGION, 
-        project_id=PROJECT_ID,
-        retries=0
-
-    )
-    delete_cluster = DataprocDeleteClusterOperator(
-        task_id="delete_cluster", 
-        project_id=PROJECT_ID, 
-        cluster_name=CLUSTER_NAME, 
-        region=REGION,
-        trigger_rule=TriggerRule.ALL_DONE,
-        retries=0
-    )
 
     get_dataset = BigQueryGetDatasetOperator(task_id="get-dataset", dataset_id=DATASET_NAME,retries=0)
 
@@ -188,10 +127,7 @@ with DAG(
         retries=0
     )
 
-    create_cluster >> execute_spark_bronze_to_silver_rent 
-    execute_spark_bronze_to_silver_rent >> execute_spark_silver_to_gold_rent 
-    execute_spark_silver_to_gold_rent >> delete_cluster
-    delete_cluster >> get_dataset
+
     get_dataset>>branch_task_creation
     branch_task_creation >> [create_dataset,create_sao_paulo_rent_analisys]
     create_dataset >> create_sao_paulo_rent_analisys

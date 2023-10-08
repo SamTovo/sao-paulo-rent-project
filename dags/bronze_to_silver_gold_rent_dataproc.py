@@ -61,7 +61,7 @@ def decide_branch_create(**kwargs):
     # Check if the upstream task has failed
     if task_instance.xcom_pull(task_ids='get-dataset', key='return_value') == 'failed':
         return 'create_dataset'
-    else:
+    elif task_instance.xcom_pull(task_ids='get-dataset', key='return_value') == 'succeded':
         return 'create_sao_paulo_rent_analisys'
 
 def decide_branch_update(**kwargs):
@@ -114,13 +114,14 @@ with DAG(
         retries=0
     )
 
-    get_dataset = BigQueryGetDatasetOperator(task_id="get-dataset", dataset_id=DATASET_NAME)
+    get_dataset = BigQueryGetDatasetOperator(task_id="get-dataset", dataset_id=DATASET_NAME,retries=0)
 
-    create_dataset = BigQueryCreateEmptyDatasetOperator(task_id="create_dataset", dataset_id=DATASET_NAME)
+    create_dataset = BigQueryCreateEmptyDatasetOperator(task_id="create_dataset", dataset_id=DATASET_NAME,retries=0)
 
     branch_task_creation = BranchPythonOperator(
         task_id='branch_task_creation',
         python_callable=decide_branch_create,
+        trigger_rule="all_done",
         provide_context=True,
         dag=dag,
     )
@@ -129,6 +130,7 @@ with DAG(
     branch_task_update = BranchPythonOperator(
         task_id='branch_task_update',
         python_callable=decide_branch_update,
+        trigger_rule="all_done",
         provide_context=True,
         dag=dag,
     )
@@ -165,7 +167,7 @@ with DAG(
     execute_spark_bronze_to_silver_rent >> execute_spark_silver_to_gold_rent 
     execute_spark_silver_to_gold_rent >> delete_cluster
     delete_cluster >> get_dataset
-    get_dataset >> branch_task_creation
+    get_dataset>>branch_task_creation
     branch_task_creation >> create_dataset
     branch_task_creation >> create_sao_paulo_rent_analisys
     create_dataset >> create_sao_paulo_rent_analisys

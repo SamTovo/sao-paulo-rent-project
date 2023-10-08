@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
 from custom_modules.rent_extractor.apartment_extractor import GetApartmentsInfo
 from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
-
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pandas as pd
 from datetime import date 
 import os
@@ -34,10 +35,13 @@ def extract_rent_etl(**kwargs):
     first_page, last_page = define_page_range_for_request()
     extraction=GetApartmentsInfo(first_page,last_page)
     extraction_pd=extraction.generate_pandas_apartment_info()
-    bytes_data=extraction_pd.to_parquet(buffer)
-    buffer.seek(0)
-    result_value = buffer
-    kwargs['ti'].xcom_push(key='return_value', value=result_value)
+    parquet_buffer = BytesIO()
+    table = pa.Table.from_pandas(extraction_pd)
+    pq.write_table(table, parquet_buffer)
+    parquet_buffer.seek(0)
+    parquet_bytes = parquet_buffer.read()
+    assert isinstance(parquet_bytes, bytes)
+    kwargs['ti'].xcom_push(key='return_value', value=parquet_bytes)
 
 FILE_NAME=f"/bronze/scraped_rent_sp_{date.today()}.parquet"
 BUCKET_NAME="rent-extraction"

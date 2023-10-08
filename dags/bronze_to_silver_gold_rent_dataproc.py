@@ -165,6 +165,7 @@ with DAG(
         {"name": "number_of_bathrooms", "type": "INTEGER", "mode": "REQUIRED"},
         {"name": "latitude", "type": "FLOAT64", "mode": "REQUIRED"},
         {"name": "longitude", "type": "FLOAT64", "mode": "REQUIRED"},        
+        {"name": "neighborhood", "type": "STRING", "mode": "REQUIRED"}, 
     ],
     write_disposition="WRITE_TRUNCATE",
     retries=0,

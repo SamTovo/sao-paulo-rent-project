@@ -28,7 +28,7 @@ INIT_BUCKET="gold-init-script"
 INIT_FILE="pip-install.sh"
 DATASET_NAME="rent_extraction_dataset"
 DATA_SAMPLE_GCS_BUCKET_NAME="rent-extraction-us"
-DATA_SAMPLE_GCS_OBJECT_NAME='gold/gold_rent_extraction.parquet'
+DATA_SAMPLE_GCS_OBJECT_NAME='gold/gold_rent_extraction.parquet/*.parquet'
 
 CLUSTER_GENERATOR_CONFIG = ClusterGenerator(
     project_id=PROJECT_ID,
@@ -154,6 +154,7 @@ with DAG(
         task_id="create_sao_paulo_rent_analisys",
         bucket=DATA_SAMPLE_GCS_BUCKET_NAME,
         source_objects=[DATA_SAMPLE_GCS_OBJECT_NAME],
+        source_format='PARQUET',
         destination_project_dataset_table=f"{DATASET_NAME}.sao_paulo_rent_analisys",
         schema_fields=[
         {"name": "price", "type": "INTEGER", "mode": "REQUIRED"},

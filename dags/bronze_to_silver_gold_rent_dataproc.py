@@ -130,25 +130,6 @@ with DAG(
 
     create_dataset = BigQueryCreateEmptyDatasetOperator(task_id="create_dataset", dataset_id=DATASET_NAME,retries=0)
     
-#     create_sao_paulo_rent_analisys = BigQueryCreateExternalTableOperator(
-#     task_id="create_sao_paulo_rent_analisys",
-#     destination_project_dataset_table=f"{DATASET_NAME}.sao_paulo_rent_analisys",
-#     bucket=DATA_SAMPLE_GCS_BUCKET_NAME,
-#     source_objects=[DATA_SAMPLE_GCS_OBJECT_NAME],
-#     schema_fields=[
-#         {"name": "price", "type": "INTEGER", "mode": "REQUIRED"},
-#         {"name": "total_price", "type": "INTEGER", "mode": "REQUIRED"},
-#         {"name": "address", "type": "STRING", "mode": "REQUIRED"},
-#         {"name": "floor_size", "type": "INTEGER", "mode": "REQUIRED"},
-#         {"name": "number_of_rooms", "type": "INTEGER", "mode": "REQUIRED"},
-#         {"name": "number_of_bathrooms", "type": "INTEGER", "mode": "REQUIRED"},
-#         {"name": "latitude", "type": "FLOAT64", "mode": "REQUIRED"},
-#         {"name": "longitude", "type": "FLOAT64", "mode": "REQUIRED"},        
-#     ],
-#     retries=0,
-#     trigger_rule="one_success"
-    
-# )
 
     create_sao_paulo_rent_analisys = GCSToBigQueryOperator(
         task_id="create_sao_paulo_rent_analisys",
@@ -165,31 +146,13 @@ with DAG(
         {"name": "number_of_bathrooms", "type": "INTEGER", "mode": "REQUIRED"},
         {"name": "latitude", "type": "FLOAT64", "mode": "REQUIRED"},
         {"name": "longitude", "type": "FLOAT64", "mode": "REQUIRED"},        
-        {"name": "neighborhood", "type": "STRING", "mode": "REQUIRED"}, 
+        {"name": "neighborhood", "type": "STRING", "mode": "REQUIRED"}
     ],
     write_disposition="WRITE_TRUNCATE",
     retries=0,
     trigger_rule="one_success"
 )
-    branch_task_update = BranchPythonOperator(
-            task_id='branch_task_update',
-            python_callable=choose_task_to_update_table,
-            op_args=[create_sao_paulo_rent_analisys.task_id],
-            trigger_rule="all_done",
-            provide_context=True,
-            dag=dag,
-        )
-    update_table_sao_paulo_rent_analisys = BigQueryUpdateTableOperator(
-        task_id="update_table_sao_paulo_rent_analisys",
-        dataset_id=DATASET_NAME,
-        table_id="sao_paulo_rent_analisys",
-        table_resource={
-        "friendlyName": "Updated Table",
-        "description": "Updated Table",
-         },
-        retries=0
-    )
-
+ 
     create_cluster >> execute_spark_bronze_to_silver_rent 
     execute_spark_bronze_to_silver_rent >> execute_spark_silver_to_gold_rent 
     execute_spark_silver_to_gold_rent >> delete_cluster
@@ -197,5 +160,4 @@ with DAG(
     get_dataset>>branch_task_creation
     branch_task_creation >> [create_dataset,create_sao_paulo_rent_analisys]
     create_dataset >> create_sao_paulo_rent_analisys
-    create_sao_paulo_rent_analisys >> branch_task_update
-    branch_task_update >> update_table_sao_paulo_rent_analisys
+    create_sao_paulo_rent_analisys

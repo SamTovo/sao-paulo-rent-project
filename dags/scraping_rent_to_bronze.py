@@ -60,12 +60,5 @@ with DAG(
         provide_context = True, 
     )
 
-    # upload_file = LocalFilesystemToGCSOperator(
-    #     task_id="upload_file",
-    #     src=extract_rent_to_parquet_bronze.output,
-    #     dst=FILE_NAME,
-    #     bucket=BUCKET_NAME,
-    #     retries=0
-    # )
     extract_rent_to_parquet_bronze 
 

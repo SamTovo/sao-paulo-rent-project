@@ -71,15 +71,6 @@ class B4SApartmentExtractor:
         except:
             floor_size=""
             return floor_size
-
-    # def find_apartment_iptu(self) -> int:
-    #     """
-    #     Return Apartment's IPTU, through the HTML's element.
-    #     """
-    #     logger.debug("Getting Apartment iptu information.")
-    #     iptu_element = self.rent_info.find('li', class_="card-price__item iptu text-regular")
-    #     iptu=iptu_element.find('span',class_="card-price__value").get_text(strip=True) if iptu_element else 0
-    #     return iptu
     
     def find_apartment_number_of_rooms(self) -> int:
         """
@@ -104,21 +95,3 @@ class B4SApartmentExtractor:
         except:
             number_of_bathrooms=""
             return number_of_bathrooms
-    # def find_apartment_parking_spots(self) -> int:
-    #     """
-    #     Return Apartment's Number of Parking Spots, through the HTML's element.
-    #     """
-    #     logger.debug("Getting Apartment parking information.")
-    #     parking_element = self.rent_info.find('li', class_="feature__item text-small js-parking-spaces")
-    #     parking=parking_element.find_all('span')[1].get_text(strip=True) if parking_element else 0        
-    #     return parking
-    
-    # def find_apartment_description(self) -> str:
-    #     """
-    #     Return Apartment's Renting Description, through the HTML's element.
-    #     """
-    #     logger.debug("Getting Apartment description information.")
-    #     description_element=self.rent_info.find('span', class_="simple-card__text text-regular")
-    #     description=description_element.next.strip() if description_element else str()
-    #     return description
-

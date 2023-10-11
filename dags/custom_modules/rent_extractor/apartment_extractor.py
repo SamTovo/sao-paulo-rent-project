@@ -93,13 +93,9 @@ class GetApartmentsInfo:
             "price":self.price,
             "total_price":self.total_price,
             "address":self.address,
-            # "condominium":self.condominium,
             "floor_size":self.floor_size,
-            # "iptu":self.iptu,
             "number_of_rooms":self.number_of_rooms,
             "number_of_bathrooms":self.number_of_bathrooms,
-            # "parking_spots":self.parking_spots,
-            # "description":self.description
         }
         logger.debug(apartment_infos_dict)
         logger.info(f"Initializing transformation to Pandas")

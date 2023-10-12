@@ -10,7 +10,7 @@
     Airflow was configured in Cloud Composer, it is easier to build and already had all GCP's connections I needed for this project.
     The only configuration I made was the Python dependencies: pandas, beautifulsoup4, pyarrow.
 
-#### Scraping to Broze DAG
+#### Scraping to Bronze DAG
 
 The [Scraping to Bronze DAG](dags/scraping_rent_to_bronze.py) has one task that checks the day of the week so it can tell the scraping script which pages to get info from (so it doesnt repeat mucb information in other days) then the scraping returns a pandas DataFrame that is transformed into a parquet file and sent to Google Cloud Storage with its API. It is setted to run every night at midnight.
 

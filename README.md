@@ -14,12 +14,16 @@
 
 The [Scraping to Bronze DAG](dags/scraping_rent_to_bronze.py) has one task that checks the day of the week so it can tell the scraping script which pages to get info from (so it doesnt repeat mucb information in other days) then the scraping returns a pandas DataFrame that is transformed into a parquet file and sent to Google Cloud Storage with its API. It is setted to run every night at midnight.
 
+![Scraping to Bronze DAG](images/Scraping_DAG.png)
+
 * Scraping and Sending to GCS:
     The Scraping process was based on the beautifulsoup4 lib and the web page it gets information and the task uses PythonOperator. With this I created 3 classes: [Web Page](dags/custom_modules/rent_extractor/beatifulsoup_abstract/b4s_abstractor_soup.py) - Gets the secction with all the info I need in the page; [Specific Infos](dags/custom_modules/rent_extractor/beatifulsoup_abstract/b4s_abstractor.py) - Gets infos in the web page that I use to create the columns for the DataFrame; [Create DataFrame](dags/custom_modules/rent_extractor/apartment_extractor.py) - By using the classes above I can create a pandas DataFrame that contains the price (monthly rent price), total_price (total sum of the rent price with taxes and condominium price), address, floor_size, number_of_rooms, number_of_bathrooms. Finally it is created the parquet file and sent to Google Cloud Storage by using the gloud.storage library.
 
 #### Bronze to Silver to Gold DAG
 
 The [Bronze to Silver to Gold DAG](dags/scraping_rent_to_bronze.py) has eight tasks, it is the dag that refines, aggregates and sends the data to BigQuery so it can be served at Looker Studio. It is setted to run every night at midnight.
+
+![Bronze to Silver to Gold DAG](images/Refining_and_Aggregating_DAG.png)
 
 * Dataproc Cluster Creation:
     To create the cluster I used the DataprocCreateClusterOperator, configuring it with a two cores master and worker machine with a init script that enables pip install, so it can install the googlemaps package so I can aggregate Geocode informations into the Gold Layer.
@@ -49,10 +53,6 @@ The [Bronze to Silver to Gold DAG](dags/scraping_rent_to_bronze.py) has eight ta
 
 The DataViz was made in Looker Studio, since it has native conection to BigQuery. The Dashboard is located in the [Link](https://lookerstudio.google.com/reporting/c7248abc-b7e2-4711-bc2b-1782715f312d/page/9OveD). It contains analysis of the Sao Paulo Apartment Renting Prices and other informations.
 
-![DataViz](images/Sao_Paulo_Rent_Price_Analysis.png)
+![DataViz](images/DataViz.png)
 
 What I want to show here is the avarage apartment you can find in each neighborhood and to also analyse it individualy.
-
-
-
-
